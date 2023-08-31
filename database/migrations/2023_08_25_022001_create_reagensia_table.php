@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('nama_reagensia');
             $table->string('satuan');
             $table->date('tanggal_masuk');
-            $table->date('tanggal_keluar');
+            $table->date('tanggal_keluar')->nullable();
             $table->integer('jumlah_masuk');
-            $table->integer('jumlah_keluar');
+            $table->integer('jumlah_keluar')->default(0);
             $table->integer('stok');
             $table->date('tanggal_kadaluarsa');
             $table->longText('keterangan');

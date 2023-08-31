@@ -20,15 +20,21 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 Route::get('/', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/register', [LoginController::class, 'v_register'])->name('register');
+Route::post('/registration', [LoginController::class, 'register'])->name('registration');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('checkRole:admin,operator');
 
 Route::get('/reagensia', [DashboardController::class, 'reagensia'])->name('reagensia')->middleware('auth');
 Route::post('/reagensia/tambahreagensia', [DashboardController::class, 'tambahreagensia'])->name('tambahreagensia');
 Route::get('/reagensia/export', [DashboardController::class, 'exportexcel']);
+Route::get('/api/reagensia/{namaReagensia}', [DashboardController::class, 'getAPIReagensia'])->name('getAPIReagensia');
+Route::delete('/reagensia/hapusreagensia/{id}', [DashboardController::class, 'hapusreagensia']);
 
-Route::get('user-management', [DashboardController::class, 'usermanagement'])->name('usermanagement')->middleware(['checkRole:admin,operator']);
+
+Route::get('user-management', [DashboardController::class, 'usermanagement'])->name('usermanagement')->middleware(['checkRole:admin']);
 Route::post('/user-management/ubahpassword/{id}', [DashboardController::class, 'ubahpassword'])->name('ubahpassword');
+Route::put('/user-management/ubahrole/{id}', [DashboardController::class, 'editRole'])->name('ubahRole');
 
 
 // Route::post('/pengelolaandatatamu/tambahtamu', [DashboardController::class, 'createTamu']);

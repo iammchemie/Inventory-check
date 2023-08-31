@@ -21,8 +21,8 @@ class reagenExport implements FromCollection
                 $key + 1, // Nomor urutan
                 $item->nama_reagensia,
                 $item->satuan,
-                $item->tanggal_keluar,
                 $item->tanggal_masuk,
+                $item->tanggal_keluar,
                 $item->jumlah_masuk,
                 $item->jumlah_keluar,
                 $item->stok,

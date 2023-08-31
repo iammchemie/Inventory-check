@@ -5,99 +5,125 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <!-- DATA TABLE -->
-                        <h3 class="title-5 m-b-35">data table</h3>
-                        <div id="successAlert" class="alert alert-success" role="alert">
-                            A simple success alert—check it out!
-                        </div>
-                        <div id="dangerAlert" class="alert alert-danger" role="alert">
+                        <h3 class="title-5 m-b-35">Data Inventaris Reagensia</h3>
+                        @if (session('success'))
+                            <div id="successAlert" class="alert alert-success" role="alert">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                        <div id="dangerAlert" hidden class="alert alert-danger" role="alert">
                             A simple success alert—check it out!
                         </div>
                         <div class="table-data__tool">
                             <div class="table-data__tool-left">
-                                <div class="rs-select2--light rs-select2--md">
-                                    <select class="js-select2" name="property">
-                                        <option selected="selected">All Properties</option>
-                                        <option value="">Option 1</option>
-                                        <option value="">Option 2</option>
-                                    </select>
-                                    <div class="dropDownSelect2"></div>
-                                </div>
-                                <a href="/reagensia/export" class="btn btn-success my-3" target="_blank">EXPORT EXCEL</a>
-                                <div class="rs-select2--light rs-select2--sm">
-                                    <select class="js-select2" name="time">
-                                        <option selected="selected">Today</option>
-                                        <option value="">3 Days</option>
-                                        <option value="">1 Week</option>
-                                    </select>
-                                    <div class="dropDownSelect2"></div>
-                                </div>
-                                <button class="au-btn-filter">
-                                    <i class="zmdi zmdi-filter-list"></i>filters</button>
                             </div>
                             <div class="table-data__tool-right">
-                                <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-bs-toggle="modal"
-                                    data-bs-target="#tambahModal">
-                                    <i class="zmdi zmdi-plus"></i>add item</button>
+                                @if (auth()->user()->RoleId != 3)
+                                    <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-bs-toggle="modal"
+                                        data-bs-target="#tambahModal">
+                                        <i class="zmdi zmdi-plus"></i>add item</button>
+                                @endif
                                 <div class="rs-select2--dark rs-select2--sm rs-select2--dark2">
-                                    <select class="js-select2" name="type">
-                                        <option selected="selected">Export</option>
-                                        <option value="">Option 1</option>
-                                        <option value="">Option 2</option>
-                                    </select>
+                                    <a class="au-btn-filter" href="/reagensia/export" target="_blank">Export Excel</a>
                                     <div class="dropDownSelect2"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="table-responsive table--no-card m-b-40">
-                            <table class="table table-borderless table-striped table-earning">
-                                <thead>
-                                    <tr>
-                                        <th class="pl-4">No</th>
-                                        <th class="pl-1">Nama Reagensia</th>
-                                        <th class="pl-1">Saldo</th>
-                                        <th class="pl-1">Tanggal Kadaluarsa</th>
-                                        <th class="pl-1">Keterangan</th>
-                                        <th></th>
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($reagensia as $p)
+                        <div id="item-table">
+                            <div class="table-responsive table--no-card m-b-40">
+                                <table class="table table-borderless table-striped table-earning">
+                                    <thead>
                                         <tr>
-                                            <td class="pl-4">1</td>
-                                            <td class="pl-1">{{ $p->nama_reagensia }}</td>
-                                            <td class="pl-1">{{ $p->saldo }}</td>
-                                            <td class="pl-1">{{ $p->tanggal_kadaluarsa }}</td>
-                                            <td class="pl-1">{{ $p->keterangan }}</td>
-                                            <td>
-                                                <div class="table-data-feature">
-                                                    <button class="item" data-toggle="tooltip" data-placement="top"
-                                                        title="Edit">
-                                                        <i class="zmdi zmdi-edit"></i>
-                                                    </button>
-                                                    <button class="item" data-toggle="tooltip" data-placement="top"
-                                                        title="Delete">
-                                                        <i class="zmdi zmdi-delete"></i>
-                                                    </button>
-                                                    <button class="item" data-toggle="tooltip" data-placement="top"
-                                                        title="More">
-                                                        <i class="zmdi zmdi-more"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
+                                            <th class="pl-4">No</th>
+                                            <th class="pl-1">Nama Reagensia</th>
+                                            <th class="pl-1">Stok</th>
+                                            <th class="pl-1">Tanggal Kadaluarsa</th>
+                                            <th class="pl-1">Keterangan</th>
+                                            <th>Action</th>
+
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($reagensia as $p)
+                                            <tr>
+                                                <td class="pl-4">
+                                                    {{ ($reagensia->currentPage() - 1) * $reagensia->perPage() + $loop->iteration }}
+                                                </td>
+                                                <td class="pl-1">{{ $p->nama_reagensia }}</td>
+                                                <td class="pl-1">{{ $p->stok }}</td>
+                                                <td class="pl-1">{{ $p->tanggal_kadaluarsa }}</td>
+                                                <td class="pl-1">{{ $p->keterangan }}</td>
+                                                <td class="pl-4">
+                                                    <div class="table-data-feature">
+                                                        @if (auth()->user()->RoleId != 3)
+                                                            <button class="item" data-toggle="tooltip"
+                                                                data-placement="top" title="More" data-bs-toggle="modal"
+                                                                data-bs-target="#moreModal{{ $p->id }}">
+                                                                <i class="zmdi zmdi-more"></i>
+                                                            </button>
+                                                            <form action="/reagensia/hapusreagensia/{{ $p->id }}"
+                                                                method="POST" class="d-inline">
+                                                                @method('delete')
+                                                                @csrf
+                                                                <button class="item" type="submit" data-toggle="tooltip"
+                                                                    onclick="return confirm('Anda yakin ingin menghapus data ini?')"
+                                                                    data-placement="top" title="Delete">
+                                                                    <i class="zmdi zmdi-delete"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
+
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <!-- END DATA TABLE -->
+                        <div id="pagination-links">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $reagensia->url(1) }}" aria-label="First">
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">First</span>
+                                        </a>
+                                    </li>
+                                    @php
+                                        $startPage = max(1, $reagensia->currentPage() - 1);
+                                        $endPage = min($reagensia->lastPage(), $reagensia->currentPage() + 1);
+                                        if ($reagensia->currentPage() === 1) {
+                                            $endPage = min($reagensia->lastPage(), 3);
+                                        } elseif ($reagensia->currentPage() === 2) {
+                                            $startPage = 1;
+                                            $endPage = min($reagensia->lastPage(), 3);
+                                        } elseif ($reagensia->currentPage() === $reagensia->lastPage()) {
+                                            $startPage = max(1, $reagensia->lastPage() - 2);
+                                            $endPage = $reagensia->lastPage();
+                                        }
+                                    @endphp
+                                    @for ($i = $startPage; $i <= $endPage; $i++)
+                                        <li class="page-item {{ $reagensia->currentPage() === $i ? 'active' : '' }}">
+                                            <a class="page-link" href="{{ $reagensia->url($i) }}">{{ $i }}</a>
+                                        </li>
+                                    @endfor
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $reagensia->url($reagensia->lastPage()) }}"
+                                            aria-label="Last">
+                                            <span aria-hidden="true">&raquo;</span>
+                                            <span class="sr-only">Last</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="copyright">
-                            <p>Copyright © 2018 Colorlib. All rights reserved. Template by <a
+                            <p>Copyright © 2023 Colorlib. All rights reserved. Template by <a
                                     href="https://colorlib.com">Colorlib</a>.</p>
                         </div>
                     </div>
@@ -162,9 +188,8 @@
                                 <label class="form-label">Jumlah</label>
                                 <input type="text" class="form-control @error('jumlah_keluar') is-invalid @enderror"
                                     id="jumlah_keluar" name="jumlah_keluar" value="{{ old('jumlah_keluar') }}">
-                                @error('jumlah_keluar')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input type="text" class="form-control" id="stok" name="stok"
+                                    value="{{ old('stok') }}" hidden>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -195,6 +220,64 @@
             </div>
         </div>
     </div>
+    @foreach ($reagensia as $re)
+        <div class="modal fade" id="moreModal{{ $re->id }}" tabindex="-1"
+            aria-labelledby="moreModalLabel{{ $re->id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="moreModalLabel{{ $re->id }}">{{ $re->nama_reagensia }}</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-bs-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nama &nbsp : {{ $re->nama_reagensia }}
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Satuan &nbsp : {{ $re->satuan }}</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal Masuk &nbsp : {{ $re->tanggal_masuk }}
+                                ({{ $re->jumlah_masuk }})
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal Keluar &nbsp : @if ($re->tanggal_keluar != null)
+                                    {{ $re->tanggal_keluar }} ({{ $re->jumlah_keluar }})
+                                @else
+                                    -
+                                @endif
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stok &nbsp : {{ $re->stok }}
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal Kadaluarsa &nbsp : {{ $re->tanggal_kadaluarsa }}
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Keterangan &nbsp : {{ $re->keterangan }}
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal Input &nbsp : {{ $re->created_at }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         const tanggalMasukInput = document.getElementById('tanggal_masuk');
         const tanggalKeluarInput = document.getElementById('tanggal_keluar');
@@ -219,5 +302,54 @@
         setTimeout(function() {
             dangerElement.style.display = 'none';
         }, 5000);
+
+        const namaReagensiaInput = document.getElementById('nama_reagensia');
+        namaReagensiaInput.addEventListener('change', () => {
+            const namaReagensia = namaReagensiaInput.value;
+
+            // Mengambil data dari server berdasarkan nama reagensia
+            fetch(`/api/reagensia/${namaReagensia}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Mengisi field-field pada formulir dengan data yang diterima
+                    document.getElementById('satuan').value = data.satuan;
+                    document.getElementById('stok').value = data.stok;
+                })
+            console.log(data.satuan)
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        $(document).ready(function() {
+            const table = $('#item-table');
+            const paginationLinks = $('#pagination-links');
+
+            paginationLinks.on('click', '.page-link', function(event) {
+                event.preventDefault();
+                const url = $(this).attr('href');
+
+                $.ajax({
+                    url: url,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(data) {
+                        table.html($(data).find('#item-table').html());
+                        paginationLinks.html($(data).find('#pagination-links').html());
+                        scrollToTop();
+                    },
+                    error: function(error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+
+            function scrollToTop() {
+                table[0].scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
     </script>
 @endsection

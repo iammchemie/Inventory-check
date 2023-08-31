@@ -82,7 +82,8 @@
                                     <div class="account-wrap">
                                         <div class="account-item clearfix js-item-menu">
                                             <div class="image">
-                                                <img src="images/icon/avatar-01.jpg" alt="John Doe" />
+                                                <img src="images/icon/avatar-01.jpg" alt="John Doe"
+                                                    style="border-radius: 50%" />
                                             </div>
                                             <div class="content">
                                                 <a class="js-acc-btn" href="#">{{ Auth()->user()->name }}</a>
@@ -143,6 +144,8 @@
     <script src="vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
     <script src="vendor/chartjs/Chart.bundle.min.js"></script>
     <script src="vendor/select2/select2.min.js"></script>
+    <script src="js/hide-password.js"></script>
+
 
     <!-- Main JS-->
     <script src="js/main.js"></script>

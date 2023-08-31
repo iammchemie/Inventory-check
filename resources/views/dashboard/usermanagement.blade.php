@@ -6,29 +6,20 @@
                 <div class="row">
                     <div class="col-md-12">
                         <!-- DATA TABLE -->
-                        <h3 class="title-5 m-b-35">data table</h3>
-                        <div class="table-data__tool">
-                            <div class="table-data__tool-left">
-                                <div class="rs-select2--light rs-select2--md">
-                                    <select class="js-select2" name="property">
-                                        <option selected="selected">All Properties</option>
-                                        <option value="">Option 1</option>
-                                        <option value="">Option 2</option>
-                                    </select>
-                                    <div class="dropDownSelect2"></div>
-                                </div>
-                                <div class="rs-select2--light rs-select2--sm">
-                                    <select class="js-select2" name="time">
-                                        <option selected="selected">Today</option>
-                                        <option value="">3 Days</option>
-                                        <option value="">1 Week</option>
-                                    </select>
-                                    <div class="dropDownSelect2"></div>
-                                </div>
-                                <button class="au-btn-filter">
-                                    <i class="zmdi zmdi-filter-list"></i>filters</button>
+                        <h3 class="title-5 m-b-35">Data Users</h3>
+                        @if (session('success'))
+                            <div id="successAlert" class="alert alert-success" role="alert">
+                                {{ session('success') }}
                             </div>
+                        @endif
+                        <div id="successAlert2" class="alert alert-success" role="alert" style="display: none;">
+                            Role Berhasil dirubah
                         </div>
+                        @error('password')
+                            <div id="successAlert" class="alert alert-success" role="alert">
+                                <li>{{ $message }}</li>
+                            </div>
+                        @enderror
                         <div class="table-responsive table--no-card m-b-40">
                             <table class="table table-borderless table-striped table-earning">
                                 <thead>
@@ -48,13 +39,26 @@
                                             <td class="pl-1">{{ $u->name }}</td>
                                             <td class="pl-1">{{ $u->email }}</td>
                                             <td class="pl-1">
-                                                @if ($u->RoleId == 1)
-                                                    Admin
-                                                @elseif ($u->RoleId == 2)
-                                                    Operator
-                                                @else
-                                                    Guest
-                                                @endif
+                                                <div class="rs-select2--trans rs-select2--sm">
+                                                    <form action="{{ route('ubahRole', ['id' => $u->id]) }}" method="post"
+                                                        id="roleForm{{ $u->id }}">
+                                                        @csrf
+                                                        @method('PUT') <!-- Tambahkan metode PUT di sini -->
+
+                                                        <select class="form-control" name="role{{ $u->id }}"
+                                                            id="role{{ $u->id }}"
+                                                            data-current-role="{{ $u->RoleId }}"
+                                                            onchange="confirmRoleChange(this, {{ $u->id }})">
+                                                            <option value="1" {{ $u->RoleId == 1 ? 'selected' : '' }}>
+                                                                Admin</option>
+                                                            <option value="2" {{ $u->RoleId == 2 ? 'selected' : '' }}>
+                                                                Operator</option>
+                                                            <option value="3" {{ $u->RoleId == 3 ? 'selected' : '' }}>
+                                                                Guest</option>
+                                                        </select>
+                                                    </form>
+                                                    <div class="dropDownSelect2"></div>
+                                                </div>
                                             </td>
                                             <td>
                                                 <div class="table-data-feature">
@@ -66,7 +70,43 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                        <script>
+                                            function confirmRoleChange(selectElement, userId) {
+                                                const confirmed = confirm(
+                                                    "Apakah Anda yakin ingin mengubah role dengan nama {{ $u->name }} ke : " +
+                                                    selectElement.options[selectElement.selectedIndex].text);
+                                                if (confirmed) {
+                                                    const selectedOption = selectElement.options[selectElement.selectedIndex].text;
+                                                    selectElement.setAttribute('data-current-role', selectedOption);
+                                                    const formData = {
+                                                        _method: 'PUT',
+                                                        userId: userId,
+                                                        newRole: selectedOption,
+                                                    };
+
+                                                    $.ajax({
+                                                        type: 'POST',
+                                                        url: $('#roleForm' + userId).attr('action'),
+                                                        data: $('#roleForm' + userId).serialize(),
+                                                        success: function(response) {
+
+                                                            // Update tampilan peran pengguna sesuai dengan perubahan
+                                                            const userRoleElement = document.getElementById('userRole' + userId);
+                                                            userRoleElement.textContent = selectedOption;
+                                                        },
+                                                        error: function(error) {
+                                                            console.error(error);
+                                                        }
+                                                    });
+                                                } else {
+                                                    // Kembalikan elemen select ke peran yang sebelumnya terpilih
+                                                    const currentRole = selectElement.getAttribute('data-current-role');
+                                                    selectElement.value = currentRole;
+                                                }
+                                            }
+                                        </script>
                                     @endforeach
+                                    <script></script>
                                 </tbody>
                             </table>
                         </div>
@@ -76,7 +116,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="copyright">
-                            <p>Copyright © 2018 Colorlib. All rights reserved. Template by <a
+                            <p>Copyright © 2023 Colorlib. All rights reserved. Template by <a
                                     href="https://colorlib.com">Colorlib</a>.</p>
                         </div>
                     </div>
@@ -102,10 +142,10 @@
                                     <div class="input-group-append">
                                         <input type="password"
                                             class="form-control @error('password' . $up->id) is-invalid @enderror"
-                                            id="password" name="password{{ $up->id }}"
+                                            id="password{{ $up->id }}" name="password{{ $up->id }}"
                                             value="{{ old('password' . $up->id) }}">
 
-                                        <span id="showPasswordIcon" class="input-group-text"><i
+                                        <span id="showPasswordIcon{{ $up->id }}" class="input-group-text"><i
                                                 class="fas fa-eye-slash"></i></span>
                                     </div>
                                     @error('password' . $up->id)
@@ -119,10 +159,10 @@
                                 <div class="input-group-append">
                                     <input type="password"
                                         class="form-control @error('repassword' . $up->id) is-invalid @enderror"
-                                        id="repassword" name="repassword{{ $up->id }}"
+                                        id="repassword{{ $up->id }}" name="repassword{{ $up->id }}"
                                         value="{{ old('password' . $up->id) }}">
 
-                                    <span id="showrePasswordIcon" class="input-group-text"><i
+                                    <span id="showrePasswordIcon{{ $up->id }}" class="input-group-text"><i
                                             class="fas fa-eye-slash"></i></span>
                                 </div>
                                 @error('repassword' . $up->id)
@@ -142,31 +182,44 @@
             </div>
         </div>
         <script>
-            const passwordInput = document.getElementById('password');
-            const showPasswordIcon = document.getElementById('showPasswordIcon');
+            const passwordInput{{ $up->id }} = document.getElementById('password{{ $up->id }}');
+            const showPasswordIcon{{ $up->id }} = document.getElementById('showPasswordIcon{{ $up->id }}');
 
-            showPasswordIcon.addEventListener('click', function() {
-                if (passwordInput.type === 'password') {
-                    passwordInput.type = 'text';
-                    showPasswordIcon.innerHTML = '<i class="fas fa-eye"></i>'; // Ikon mata tertutup
+            showPasswordIcon{{ $up->id }}.addEventListener('click', function() {
+                if (passwordInput{{ $up->id }}.type === 'password') {
+                    passwordInput{{ $up->id }}.type = 'text';
+                    showPasswordIcon{{ $up->id }}.innerHTML = '<i class="fas fa-eye"></i>'; // Ikon mata tertutup
                 } else {
-                    passwordInput.type = 'password';
-                    showPasswordIcon.innerHTML = '<i class="fas fa-eye-slash"></i>'; // Ikon mata terbuka
+                    passwordInput{{ $up->id }}.type = 'password';
+                    showPasswordIcon{{ $up->id }}.innerHTML =
+                        '<i class="fas fa-eye-slash"></i>'; // Ikon mata terbuka
                 }
             });
 
-            const repasswordInput = document.getElementById('repassword');
-            const showrePasswordIcon = document.getElementById('showrePasswordIcon');
+            const repasswordInput{{ $up->id }} = document.getElementById('repassword{{ $up->id }}');
+            const showrePasswordIcon{{ $up->id }} = document.getElementById('showrePasswordIcon{{ $up->id }}');
 
-            showrePasswordIcon.addEventListener('click', function() {
-                if (repasswordInput.type === 'password') {
-                    repasswordInput.type = 'text';
-                    showrePasswordIcon.innerHTML = '<i class="fas fa-eye"></i>'; // Ikon mata tertutup
+            showrePasswordIcon{{ $up->id }}.addEventListener('click', function() {
+                if (repasswordInput{{ $up->id }}.type === 'password') {
+                    repasswordInput{{ $up->id }}.type = 'text';
+                    showrePasswordIcon{{ $up->id }}.innerHTML =
+                        '<i class="fas fa-eye"></i>'; // Ikon mata tertutup
                 } else {
-                    repasswordInput.type = 'password';
-                    showrePasswordIcon.innerHTML = '<i class="fas fa-eye-slash"></i>'; // Ikon mata terbuka
+                    repasswordInput{{ $up->id }}.type = 'password';
+                    showrePasswordIcon{{ $up->id }}.innerHTML =
+                        '<i class="fas fa-eye-slash"></i>'; // Ikon mata terbuka
                 }
             });
+
+            var successElement = document.getElementById('successAlert');
+            var dangerElement = document.getElementById('dangerAlert');
+            setTimeout(function() {
+                successElement.style.display = 'none';
+            }, 5000);
+
+            setTimeout(function() {
+                dangerElement.style.display = 'none';
+            }, 5000);
         </script>
     @endforeach
 @endsection

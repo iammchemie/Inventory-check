@@ -10,7 +10,7 @@
     <link href="vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
     <link href="vendor/font-awesome-5/css/fontawesome-all.min.css" rel="stylesheet" media="all">
 
-    <title>Login</title>
+    <title>Registrasi</title>
 </head>
 
 <body>
@@ -38,28 +38,35 @@
                 <div class="row align-items-center">
                     <div class="header-text mb-4">
                         <h2>Hello</h2>
-                        <p>Silahkan login untuk masuk kedalam aplikasi.</p>
-                        @if (session('success'))
-                            <div id="successAlert" class="alert alert-success mt-3">
-                                {{ session('success') }}
-                            </div>
-                        @elseif (session('error'))
-                            <div id="dangerAlert" class="alert alert-danger mt-3">
-                                {{ session('error') }}
-                            </div>
-                        @endif
+                        <p>Silahkan Daftar</p>
                     </div>
-                    <form action="/login" method="post">
+                    <form action="{{ route('registration') }}" method="post">
                         @csrf
+                        <div class="input-group mb-3">
+                            <input type="text" id="name" name="name"
+                                class="form-control form-control-lg bg-light fs-6 @error('name') is-invalid @enderror"
+                                placeholder="Name" value="{{ old('name') }}">
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="text" id="username" name="username"
+                                class="form-control form-control-lg bg-light fs-6 @error('username') is-invalid @enderror"
+                                placeholder="Username" value="{{ old('username') }}">
+                            @error('username')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                         <div class="input-group mb-3">
                             <input type="email" id="email" name="email"
                                 class="form-control form-control-lg bg-light fs-6 @error('email') is-invalid @enderror"
-                                placeholder="Email address">
+                                placeholder="Email" value="{{ old('email') }}">
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="input-group mb-1">
+                        <div class="input-group mb-3">
                             <input type="password" id="password" name="password"
                                 class="form-control form-control-lg bg-light fs-6
                                 @error('password') is-invalid @enderror"
@@ -69,14 +76,24 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="input-group mb-1">
+                            <input type="password" id="repassword" name="repassword"
+                                class="form-control form-control-lg bg-light fs-6
+                                @error('repassword') is-invalid @enderror"
+                                placeholder="Re Password">
+                            <span id="showrePasswordIcon" class="input-group-text"><i
+                                    class="fas fa-eye-slash"></i></span>
+                            @error('repassword')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                         <div class="input-group mb-3 d-flex justify-content-between">
-
                         </div>
                         <div class="input-group mb-3">
-                            <button class="btn btn-lg btn-primary w-100 fs-6" type="submit">Login</button>
+                            <button class="btn btn-lg btn-primary w-100 fs-6" type="submit">Register</button>
                         </div>
                         <div class="row">
-                            <small>Tidak punya akun? <a href="{{ route('register') }}">Sign Up</a></small>
+                            <small>Sudah punya akun? <a href="{{ route('login') }}">Back To Sign In</a></small>
                         </div>
                     </form>
                 </div>
@@ -98,15 +115,18 @@
             }
         });
 
-        var successElement = document.getElementById('successAlert');
-        var dangerElement = document.getElementById('dangerAlert');
-        setTimeout(function() {
-            successElement.style.display = 'none';
-        }, 5000);
+        const repasswordInput = document.getElementById('repassword');
+        const showrePasswordIcon = document.getElementById('showrePasswordIcon');
 
-        setTimeout(function() {
-            dangerElement.style.display = 'none';
-        }, 5000);
+        showrePasswordIcon.addEventListener('click', function() {
+            if (repasswordInput.type === 'password') {
+                repasswordInput.type = 'text';
+                showrePasswordIcon.innerHTML = '<i class="fas fa-eye"></i>'; // Ikon mata tertutup
+            } else {
+                repasswordInput.type = 'password';
+                showrePasswordIcon.innerHTML = '<i class="fas fa-eye-slash"></i>'; // Ikon mata terbuka
+            }
+        });
     </script>
 
 </body>
