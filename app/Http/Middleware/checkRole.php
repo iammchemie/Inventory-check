@@ -25,7 +25,11 @@ class checkRole
         if (auth()->check() && in_array(auth()->user()->RoleId, $allowedRoleIds)) {
             return $next($request);
         } else {
-            abort(403);
+            if (auth()->check() && auth()->user()->RoleId === 3) {
+                return redirect()->route('reagensia');
+            } else {
+                abort(403);
+            }
         }
     }
 }

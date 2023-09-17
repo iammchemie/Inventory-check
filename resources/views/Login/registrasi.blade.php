@@ -93,7 +93,7 @@
                             <button class="btn btn-lg btn-primary w-100 fs-6" type="submit">Register</button>
                         </div>
                         <div class="row">
-                            <small>Sudah punya akun? <a href="{{ route('login') }}">Back To Sign In</a></small>
+                            <small>Sudah punya akun ? <a href="{{ route('login') }}">Back To Sign In</a></small>
                         </div>
                     </form>
                 </div>

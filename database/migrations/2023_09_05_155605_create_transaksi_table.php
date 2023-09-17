@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reagensia', function (Blueprint $table) {
+        Schema::create('transaksi', function (Blueprint $table) {
             $table->id();
             $table->string('nama_reagensia');
             $table->string('satuan');
-            $table->date('tanggal_masuk')->nullable();
+            $table->date('tanggal_masuk');
             $table->date('tanggal_keluar')->nullable();
-            $table->integer('jumlah_masuk')->nullable();
-            $table->integer('jumlah_keluar')->nullable()->default(0);
+            $table->integer('jumlah_masuk');
+            $table->integer('jumlah_keluar')->default(0);
             $table->integer('stok');
             $table->date('tanggal_kadaluarsa');
-            $table->longText('keterangan')->nullable();
+            $table->longText('keterangan');
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reagensia');
+        Schema::dropIfExists('transaksi');
     }
 };

@@ -2,7 +2,7 @@
 <aside class="menu-sidebar d-none d-lg-block">
     <div class="logo">
         <a href="#">
-            <img src="images/icon/logo.png" class="img-fluid" alt="BPOM" style="max-width: 30%; margin-left: 35%" />
+            <img src="images/icon/logo.png" class="img-fluid" alt="BPOM" style="max-width: 20%; margin-left: 35%" />
         </a>
     </div>
     <div class="menu-sidebar__content js-scrollbar1">
